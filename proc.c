@@ -471,3 +471,14 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+int clone(void *stack)
+{
+
+	cprintf("clone call \n");
+	cprintf("stack value is: %p \n",stack);
+	return 0;
+}
+
+
+

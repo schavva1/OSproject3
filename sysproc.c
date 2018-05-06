@@ -15,6 +15,21 @@ sys_fork(void)
   return fork();
 }
 
+
+int sys_clone(void)
+{
+	cprintf("clone is called \n");
+	int stack;
+	if(argint(0,&stack) < 0)
+	{
+		return -1;
+	}
+	
+	return clone((void *) stack);
+	//return 1;
+}
+
+
 int
 sys_exit(void)
 {

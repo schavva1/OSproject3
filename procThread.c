@@ -6,7 +6,12 @@
 int procThread_create(void)
 {
     // add your implementation here ...
-    return -1;
+    // return -1;
+    printf(1,"procThread_create is called\n");
+    void *st;
+    st = malloc(4096); 
+    clone(st);
+    return 1;
 }
 
 
