@@ -474,10 +474,57 @@ procdump(void)
 
 int clone(void *stack)
 {
+	int i, pid;
+ 	struct proc *np;
 
+  // Allocate process.
+  if((np = allocproc()) == 0)
+   return -1;
+
+  
+  
+  np->pgdir = proc->pgdir;
+  np->sz = proc->sz;
+  np->parent = proc;
+  *np->tf = *proc->tf;
+
+  // Clear %eax so that fork returns 0 in the child.
+  np->tf->eax = 0;
+
+  for(i = 0; i < NOFILE; i++)
+    if(proc->ofile[i])
+      np->ofile[i] = filedup(proc->ofile[i]);
+  np->cwd = idup(proc->cwd);
+
+  safestrcpy(np->name, proc->name, sizeof(proc->name));
+ 
+  pid = np->pid;
+
+  // lock to force the compiler to emit the np->state write last.
+  acquire(&ptable.lock);
+  np->state = RUNNABLE;
+  release(&ptable.lock);
+  
+  return pid;
+
+	/*struct proc *p;
+	int pid;
+	if((p = allocproc()) == 0)
+	{
+		return -1;
+	}
+	cprintf("allocate process success \n");
+	p->pgdir = proc-> pgdir;
+	p->sz = proc->sz;
+	p->parent = proc;
+	*p->tf = *proc->tf;
+	
+	//clear eax 
+	p->tf->eax = p->pid;
+	
 	cprintf("clone call \n");
 	cprintf("stack value is: %p \n",stack);
-	return 0;
+	return 0; */
 }
 
 

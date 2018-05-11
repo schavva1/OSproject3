@@ -29,6 +29,12 @@ int sys_clone(void)
 	//return 1;
 }
 
+int sys_join(void)
+{	
+	cprintf("join called \n");
+	return 1;
+
+}
 
 int
 sys_exit(void)
