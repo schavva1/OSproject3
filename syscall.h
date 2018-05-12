@@ -24,4 +24,4 @@
 #define SYS_print_free_frame_cnt 24
 #define SYS_clone  25
 #define SYS_join   26        
-//#define SYS_exit   27
+#define SYS_threadexit   27

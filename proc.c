@@ -474,58 +474,93 @@ procdump(void)
 
 int clone(void *stack)
 {
-	int i, pid;
- 	struct proc *np;
+	  int i, pid;
+	  struct proc *np;
 
-  // Allocate process.
-  if((np = allocproc()) == 0)
-   return -1;
+	  // Allocate process.
+	  if((np = allocproc()) == 0)
+	  {
+	    return -1;
+	  }
+	  np->pgdir = proc->pgdir;
+	  np->sz = proc->sz;
+	  //np->parent = proc;
+	  *np->tf = *proc->tf;
 
-  
-  
-  np->pgdir = proc->pgdir;
-  np->sz = proc->sz;
-  np->parent = proc;
-  *np->tf = *proc->tf;
+	  // Clear %eax so that fork returns 0 in the child.
+	  np->tf->eax = 0;
+	  
+	 /* //calculate stack size(from function arg #n to esp)               // trick change -dont forget
+	  uint stackSize = *(uint *)proc->tf->ebp - proc->tf->esp;
+	  //move stack pointer to bottom of trapframe
+	  np->tf->esp = (uint)stack+size - stackSize;
+	  //calculate size needed above ebp
+	  uint topSize = *(uint *)proc->tf->ebp - proc->tf->ebp;
+	  //move base pointer below topsize
+	  np->tf->ebp = (uint)stack+size - topSize;
+	  //copy parent process's stack to child
+	  memmove((void *)(np->tf->esp),(const void *)(proc->tf->esp), stackSize); */
+	  
+	  for(i = 0; i < NOFILE; i++)
+	  {
+		if(proc->ofile[i])
+		  {
+		  	np->ofile[i] = filedup(proc->ofile[i]);
+		  }
+	  }
+	  np->cwd = idup(proc->cwd);
 
-  // Clear %eax so that fork returns 0 in the child.
-  np->tf->eax = 0;
+	  safestrcpy(np->name, proc->name, sizeof(proc->name));
+	 
+	  pid = np->pid;
 
-  for(i = 0; i < NOFILE; i++)
-    if(proc->ofile[i])
-      np->ofile[i] = filedup(proc->ofile[i]);
-  np->cwd = idup(proc->cwd);
-
-  safestrcpy(np->name, proc->name, sizeof(proc->name));
- 
-  pid = np->pid;
-
-  // lock to force the compiler to emit the np->state write last.
-  acquire(&ptable.lock);
-  np->state = RUNNABLE;
-  release(&ptable.lock);
-  
-  return pid;
-
-	/*struct proc *p;
-	int pid;
-	if((p = allocproc()) == 0)
-	{
-		return -1;
-	}
-	cprintf("allocate process success \n");
-	p->pgdir = proc-> pgdir;
-	p->sz = proc->sz;
-	p->parent = proc;
-	*p->tf = *proc->tf;
-	
-	//clear eax 
-	p->tf->eax = p->pid;
-	
-	cprintf("clone call \n");
-	cprintf("stack value is: %p \n",stack);
-	return 0; */
+	  // lock to force the compiler to emit the np->state write last.
+	  acquire(&ptable.lock);
+	  np->state = RUNNABLE;
+	  release(&ptable.lock);
+	  
+	  return pid;
 }
 
+void thread_exit(int ret_val)
+{
+  struct proc *p;
+  int fd;
+
+  if(proc == initproc)
+    panic("init exiting");
+
+  // Close all open files.
+  for(fd = 0; fd < NOFILE; fd++){
+    if(proc->ofile[fd]){
+      fileclose(proc->ofile[fd]);
+      proc->ofile[fd] = 0;
+    }
+  }
+
+  begin_op();
+  iput(proc->cwd);
+  end_op();
+  proc->cwd = 0;
+
+  acquire(&ptable.lock);
+
+  // Parent might be sleeping in wait().
+  wakeup1(proc->parent);
+
+  // Pass abandoned children to init.
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->parent == proc){
+      p->parent = initproc;
+      if(p->state == ZOMBIE)
+        wakeup1(initproc);
+    }
+  }
+
+  // Jump into the scheduler, never to return.
+  proc->state = ZOMBIE;
+  sched();
+  panic("zombie exit");
+}
 
 

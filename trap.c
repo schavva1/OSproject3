@@ -97,6 +97,10 @@ trap(struct trapframe *tf)
             rcr2());
     proc->killed = 1;
     }
+    else
+    {
+    	thread_exit(tf->eax);	
+    }
   }
 
   // Force process exit if it has been killed and is in user space.

@@ -20,12 +20,17 @@ int sys_clone(void)
 {
 	cprintf("clone is called \n");
 	int stack;
+	int size;
+	
 	if(argint(0,&stack) < 0)
 	{
 		return -1;
 	}
-	
-	return clone((void *) stack);
+	if(argint(0,&size) < 0)
+	{
+		return -1;
+	}
+	return clone((void*) stack);
 	//return 1;
 }
 
@@ -42,6 +47,22 @@ sys_exit(void)
   exit();
   return 0;  // not reached
 }
+
+int sys_threadexit(void)
+{
+	
+	cprintf("Threadexit  called \n");
+	int ret_val;
+	
+	if(argint(0,&ret_val) < 0)
+	{
+		return -1;
+	}
+	thread_exit(ret_val);
+	return 0;
+
+}
+
 
 int
 sys_wait(void)
@@ -125,3 +146,5 @@ int sys_print_free_frame_cnt(void)
     cprintf("free-frames %d\n", free_frame_cnt);
     return 0;
 }
+
+

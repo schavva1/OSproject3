@@ -19,7 +19,10 @@ int procThread_create(void)
 void procThread_exit(int ret_val)
 {
     // add your implementation here ...
-    
+    printf(1,"procThread_exit is called");
+    //printf(1,"ret value is",s);
+    threadexit(ret_val);
+   // return 0;
 }
 
 

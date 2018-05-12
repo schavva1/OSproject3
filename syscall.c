@@ -100,7 +100,7 @@ extern int sys_write(void);
 extern int sys_uptime(void);
 extern int sys_clone(void);
 extern int sys_join(void);
-//extern int sys_exit(void);
+extern int sys_threadexit(void);
 
 extern int sys_shutdown(void);
 extern int sys_print_free_frame_cnt(void);
@@ -130,7 +130,7 @@ static int (*syscalls[])(void) = {
 [SYS_print_free_frame_cnt]  sys_print_free_frame_cnt,
 [SYS_clone]   sys_clone,
 [SYS_join]    sys_join,
-//[SYS_exit]    sys_exit,
+[SYS_threadexit]    sys_threadexit,
 };
 
 void

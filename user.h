@@ -25,6 +25,7 @@ int sleep(int);
 int uptime(void);
 int clone(void*);
 int join(void);
+int threadexit(int);
 
 
 // ulib.c
