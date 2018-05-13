@@ -2,6 +2,7 @@
 #define NSEGS     7
 
 int clone(void* stack);
+void join(int tid,int * ret_p,void ** stack);
 
 // Per-CPU state
 struct cpu {

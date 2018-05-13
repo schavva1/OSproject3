@@ -24,7 +24,7 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int clone(void*);
-int join(void);
+int join(int,int*);
 int threadexit(int);
 
 

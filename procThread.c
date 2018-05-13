@@ -30,7 +30,7 @@ void procThread_join(int tid, int * ret_val_p)
 {
     // add your implementation here ...
     printf(1,"procThread_join is called\n");
-    join();
+    join(tid,ret_val_p);
     
 }
 

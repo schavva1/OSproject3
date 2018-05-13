@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#define size 4096
 
 struct {
   struct spinlock lock;
@@ -490,7 +491,7 @@ int clone(void *stack)
 	  // Clear %eax so that fork returns 0 in the child.
 	  np->tf->eax = 0;
 	  
-	 /* //calculate stack size(from function arg #n to esp)               // trick change -dont forget
+	  //calculate stack size(from function arg #n to esp)               // trick change -dont forget
 	  uint stackSize = *(uint *)proc->tf->ebp - proc->tf->esp;
 	  //move stack pointer to bottom of trapframe
 	  np->tf->esp = (uint)stack+size - stackSize;
@@ -499,7 +500,7 @@ int clone(void *stack)
 	  //move base pointer below topsize
 	  np->tf->ebp = (uint)stack+size - topSize;
 	  //copy parent process's stack to child
-	  memmove((void *)(np->tf->esp),(const void *)(proc->tf->esp), stackSize); */
+	  memmove((void *)(np->tf->esp),(const void *)(proc->tf->esp), stackSize); 
 	  
 	  for(i = 0; i < NOFILE; i++)
 	  {
@@ -563,4 +564,47 @@ void thread_exit(int ret_val)
   panic("zombie exit");
 }
 
+void join(int tid,int * ret_p,void ** stack)
+{
+  struct proc *p;
+  int havekids;
+
+  acquire(&ptable.lock);
+  for(;;)
+  {
+    // Scan through table looking for zombie children.
+    havekids = 0;
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+    {
+      if(p->parent != proc)
+        continue;
+      havekids = 1;
+      if(p->state == ZOMBIE)
+      {
+        // Found one.
+        //pid = p->pid;
+        kfree(p->kstack);
+        p->kstack = 0;
+        freevm(p->pgdir);
+        p->state = UNUSED;
+        p->pid = 0;
+        p->parent = 0;
+        p->name[0] = 0;
+        p->killed = 0;
+        release(&ptable.lock);
+        //return pid;
+      }
+    }
+
+    // No point waiting if we don't have any children.
+    if(!havekids || proc->killed)
+    {
+      release(&ptable.lock);
+      //return -1;
+    }
+
+    // Wait for children to exit.  (See wakeup1 call in proc_exit.)
+    sleep(proc, &ptable.lock);  //DOC: wait-sleep
+  }
+}
 

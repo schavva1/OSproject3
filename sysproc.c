@@ -37,8 +37,23 @@ int sys_clone(void)
 int sys_join(void)
 {	
 	cprintf("join called \n");
-	return 1;
-
+	void **stack;
+	int *ret_val_p;
+	int tid;
+	if(argptr(0,(void *)&stack, sizeof(void *)) < 0)
+	{
+		return -1;
+	}
+	if(argptr(0,(void *)&ret_val_p, sizeof(int *)) < 0)
+	{
+		return -1;
+	}
+	if(argint(0,&tid) < 0)
+	{	
+		return -1;
+	}
+	join(tid,ret_val_p,stack);	
+	return 0;
 }
 
 int
