@@ -71,7 +71,11 @@ struct proc {
   char name[16];               // Process name (debugging)
   struct proc *pthread;
   void *ustack;
+  int count;
+  int t_child = 0;
 };
+//int count=0;
+//int t_child, t_parent;
 
 // Process memory is laid out contiguously, low addresses first:
 //   text
