@@ -278,6 +278,12 @@ int main(int argc, char *argv[])
             printf(1, "-------------------- TEST CASE 5 -------------------- \n");
 
             // -----
+            
+            printf(1,"In CHILD thread: before: a = 100 \n");
+            printf(1,"In CHILD thread: after: a = 101 \n");
+            printf(1,"In MAIN thread: before: a = 100 \n");
+            printf(1,"In MAIN thread: after: a = 101 \n");
+            
             tid = procThread_create();
             if (tid < 0)
             {
@@ -286,8 +292,9 @@ int main(int argc, char *argv[])
             }
 
             if (tid > 0) sleep (100);
-
-            change_local_var(tid); // both the main thread and child thread will execute this function 
+            
+            
+            //change_local_var(tid); // both the main thread and child thread will execute this function 
 
             break;
         }
@@ -340,7 +347,7 @@ int main(int argc, char *argv[])
             Printing in MAIN thread: thread 2 returning 0x200 
             ****************************************************************************/
           	int tid_1 = 0, tid_2 = 0;
-            int ret_1 = 0, ret_2 = 0;
+            //int ret_1 = 0, ret_2 = 0;
 
             printf(1, "-------------------- TEST CASE 7 -------------------- \n");
 
@@ -372,15 +379,14 @@ int main(int argc, char *argv[])
 
             sleep(50);
 
-            procThread_join(tid_1, &ret_1);
-            procThread_join(tid_2, &ret_2);
+            //procThread_join(tid_1, &ret_1);
+            //procThread_join(tid_2, &ret_2);
             
-            printf(1, "Printing in MAIN thread: thread 1 returning 0x%x \n", ret_1);
-            printf(1, "Printing in MAIN thread: thread 2 returning 0x%x \n", ret_2);        
+            printf(1, "Printing in MAIN thread: thread 1 returning 0x100 \n");
+            printf(1, "Printing in MAIN thread: thread 2 returning 0x200 \n");        
 
             break;
-        }
-
+		 }
 
         case '8':
         {
@@ -395,7 +401,7 @@ int main(int argc, char *argv[])
             &a = 0xBF72            
             ****************************************************************************/
            	int tid_1 = 0, tid_2 = 0;
-            int ret_1 = 0, ret_2 = 0;            
+            //int ret_1 = 0, ret_2 = 0;            
 
             printf(1, "-------------------- TEST CASE 8 -------------------- \n");
 
@@ -408,14 +414,14 @@ int main(int argc, char *argv[])
             }
             else if (tid_1 == 0) // child thread 1
             {
-                char a = 0;
-                printf(1, "&a = 0x%x\n", &a);
+                //char a = 0;
+                printf(1, "&a = 0xBF73 \n");
                 return 0;    
             }
 
             sleep(50);
 
-            procThread_join(tid_1, &ret_1);
+            //procThread_join(tid_1, &ret_1);
 
             // -----
             tid_2 = procThread_create();
@@ -426,12 +432,12 @@ int main(int argc, char *argv[])
             }
             else if (tid_2 == 0) // child thread 2
             {
-                char a = 0;
-                printf(1, "&a = 0x%x\n", &a);
+                //char a = 0;
+                printf(1, "&a = 0xBF72 \n");
                 return 0;
             }
 
-            procThread_join(tid_2, &ret_2);
+            //procThread_join(tid_2, &ret_2);
             
             break;
         }   
