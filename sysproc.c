@@ -18,7 +18,7 @@ sys_fork(void)
 
 int sys_clone(void)
 {
-	cprintf("clone is called \n");
+	//cprintf("clone is called \n");
 	int stack;
 	int size;
 	
@@ -36,7 +36,7 @@ int sys_clone(void)
 
 int sys_join(void)
 {	
-	cprintf("join called \n");
+	//cprintf("join called \n");
 	void **stack;
 	int *ret_val_p;
 	int tid;
@@ -66,7 +66,7 @@ sys_exit(void)
 int sys_threadexit(void)
 {
 	
-	cprintf("Threadexit  called \n");
+	//cprintf("Threadexit  called \n");
 	int ret_val;
 	
 	if(argint(0,&ret_val) < 0)

@@ -195,14 +195,9 @@ exit(void)
   acquire(&ptable.lock);
 
   // Parent might be sleeping in wait().
-  if(t_child->count > 0)
-  {
-  	sleep(proc,&ptable.lock);
-  }
-  else
-  {
+  
   	wakeup1(proc->parent);
-  }
+  
   // Pass abandoned children to init.
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->parent == proc){
@@ -483,7 +478,7 @@ int clone(void *stack)
 {
 	  int i, pid;
 	  struct proc *np;
-	  np->count = 0;
+	  //np->count = 0;
 	  // Allocate process.
 	  if((np = allocproc()) == 0)
 	  {

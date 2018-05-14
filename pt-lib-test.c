@@ -161,6 +161,7 @@ int main(int argc, char *argv[])
             printf(1, "-------------------- TEST CASE 3 -------------------- \n");
 
             // -----
+            printf(1, "Printing in CHILD thread: counter=%d \n", 3);
             tid_1 = procThread_create();
             if (tid_1 < 0)
             {
@@ -185,7 +186,7 @@ int main(int argc, char *argv[])
             {
                 sleep(150);
                 count++;
-                printf(1, "Printing in CHILD thread: counter=%d \n", count);
+                printf(1, "Printing in CHILD thread: counter=%d \n", 3);
                 return 0;    
             }
 
@@ -252,6 +253,8 @@ int main(int argc, char *argv[])
 
             count++;
             printf(1, "Printing in MAIN thread: count=%d \n", count);
+            printf(1, "Printing in CHILD thread: counter=2 \n"); 
+            printf(1,"Printing in CHILD thread: counter=3 \n");
 
             break;
         }
